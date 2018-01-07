@@ -14,39 +14,34 @@
 
 
 <ion-content padding>
-  <ion-card>
+  <ion-card *ngFor="let filme of lista_filmes">
 
     <ion-item>
       <ion-avatar item-start>
-        <img src="assets/img/eu.png" />
+        <img src="assets/img/tmdb.png" />
       </ion-avatar>
-      <h2 class="feed_title">{{ nome_usuario }}</h2>
-      <p class="date">January 3, 2018</p>
+      <h2 class="feed_title">{{filme.original_title}}</h2>
+      <p class="date">{{filme.release_date}}</p>
     </ion-item>
 
-    <img src="assets/img/imagem.png" />
+    <img [src]="'https://image.tmdb.org/t/p/w300/' + filme.backdrop_path" />
 
     <ion-card-content>
-      <p>Estou criando um app utilizando o ionic.</p>
+      <p>{{filme.overview}}</p>
     </ion-card-content>
 
     <ion-row>
       <ion-col>
-          <a (click)="soma()"><button ion-button icon-left clear small>
-          <ion-icon name="thumbs-up"></ion-icon>
-          <div>{{likes}} Likes</div>
+          <a (click)="soma_likes()"><button ion-button icon-left clear small>
+          <ion-icon name="star"></ion-icon>
+          <div>{{filme.vote_average}}</div>
         </button></a>
       </ion-col>
       <ion-col>
-        <button ion-button icon-left clear small>
-          <ion-icon name="text"></ion-icon>
-          <div>4 Comments</div>
-        </button>
-      </ion-col>
-      <ion-col center text-center>
-        <ion-note>
-          Just now
-        </ion-note>
+        <a (click)="soma_comments()"><button ion-button icon-left clear small>
+          <ion-icon name="people"></ion-icon>
+          <div>{{filme.vote_count}} Votes</div>
+        </button></a>
       </ion-col>
     </ion-row>
 

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { MovieProvider } from '../../providers/movie/movie';
 
 /**
  * Generated class for the FeedPage page.
@@ -12,22 +13,51 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 @Component({
   selector: 'page-feed',
   templateUrl: 'feed.html',
+  providers: [
+    MovieProvider
+  ]
 })
 export class FeedPage {
 
-  public nome_usuario:string = "Mariane Ferreira";
-  public likes:number = 0;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  private _movieProvider : MovieProvider;
+
+  public objeto_feed = {
+    titulo: "Mariane Ferreira",
+    data: "January 4th, 2018",
+    descricao: "Estou criando um app utilizando o ionic.",
+    qnt_likes: 0,
+    qnt_comments: 0,
+    time_post: "11h ago"
   }
 
-  public soma(): void{
-    this.likes += 1;
+  public lista_filmes = Array<any>();
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, @Inject(MovieProvider) movieProvider: MovieProvider) {
+    this._movieProvider = movieProvider;
+  }
+
+  public soma_likes(): void{
+    this.objeto_feed.qnt_likes += 1;
+  }
+
+  public soma_comments(): void{
+    this.objeto_feed.qnt_comments += 1;
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad FeedPage');
-    //this.soma(10, 99);
+    this._movieProvider.getLatestMovies().subscribe(
+      data => {
+        console.log(data);
+        const response = (data as any);
+        this.lista_filmes = response.results;
+        console.log(this.lista_filmes);
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
 }
