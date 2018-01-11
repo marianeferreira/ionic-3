@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 import { MovieProvider } from '../../providers/movie/movie';
+import { MovieDetailsPage } from '../movie-details/movie-details';
 
 /**
  * Generated class for the FeedPage page.
@@ -20,7 +21,7 @@ import { MovieProvider } from '../../providers/movie/movie';
 export class FeedPage {
 
 
-  private _movieProvider : MovieProvider;
+  private _movieProvider: MovieProvider;
 
   public objeto_feed = {
     titulo: "Mariane Ferreira",
@@ -32,30 +33,106 @@ export class FeedPage {
   }
 
   public lista_filmes = Array<any>();
+  public page = 1;
+  public loader;
+  public refresher;
+  public isRefreshing:boolean = false;
+  public infiniteScroll;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, @Inject(MovieProvider) movieProvider: MovieProvider) {
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    @Inject(MovieProvider) movieProvider: MovieProvider,
+    public loadingCtrl: LoadingController
+  ) {
     this._movieProvider = movieProvider;
   }
 
-  public soma_likes(): void{
+  presentLoading() {
+    this.loader = this.loadingCtrl.create({
+      content: "Please wait..."
+      //duration: 5000
+    });
+    this.loader.present();
+  }
+
+  hideLoading() {
+    this.loader.dismiss();
+  }
+
+  public soma_likes(): void {
     this.objeto_feed.qnt_likes += 1;
   }
 
-  public soma_comments(): void{
+  public soma_comments(): void {
     this.objeto_feed.qnt_comments += 1;
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad FeedPage');
-    this._movieProvider.getLatestMovies().subscribe(
+  doRefresh(refresher) {
+    this.refresher = refresher;
+    console.log('Begin async operation', refresher);
+    this.isRefreshing = true;
+    this.loadFeed();
+  }
+
+  ionViewDidEnter() {
+    console.log('ionViewDidEnter FeedPage');
+    this.loadFeed();
+  }
+
+  openDetails(filmeId){
+    console.log(filmeId);
+    this.navCtrl.push(MovieDetailsPage, {id: filmeId});
+  }
+
+
+  doInfinite(infiniteScroll) {
+    console.log('Begin async operation');
+    this.page++;
+    this.infiniteScroll = infiniteScroll;
+    this.loadFeed(true);
+
+    // setTimeout(() => {
+    //   for (let i = 0; i < 30; i++) {
+    //     this.items.push( this.items.length );
+    //   }
+
+    //   console.log('Async operation has ended');
+    //   infiniteScroll.complete();
+    // }, 500);
+  }
+
+  loadFeed(newpage: boolean = false){
+    this.presentLoading();
+    this._movieProvider.getLatestMovies(this.page).subscribe(
       data => {
         console.log(data);
         const response = (data as any);
-        this.lista_filmes = response.results;
+
+        if(newpage){
+          this.lista_filmes = this.lista_filmes.concat(response.results);
+          console.log(this.page);
+          this.infiniteScroll.complete();
+        }else{
+          this.lista_filmes = response.results;
+        }
+        
         console.log(this.lista_filmes);
+        this.hideLoading();
+        if(this.isRefreshing){
+          console.log('Async operation has ended');
+          this.refresher.complete();
+          this.isRefreshing = false;
+        }
       },
       error => {
         console.log(error);
+        this.hideLoading();
+        if(this.isRefreshing){
+          console.log('Async operation has ended');
+          this.refresher.complete();
+          this.isRefreshing = false;
+        }
       }
     )
   }

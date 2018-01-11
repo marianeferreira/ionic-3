@@ -14,6 +14,11 @@
 
 
 <ion-content padding>
+
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-card *ngFor="let filme of lista_filmes">
 
     <ion-item>
@@ -32,18 +37,27 @@
 
     <ion-row>
       <ion-col>
-          <a (click)="soma_likes()"><button ion-button icon-left clear small>
-          <ion-icon name="star"></ion-icon>
-          <div>{{filme.vote_average}}</div>
-        </button></a>
+        <a (click)="soma_likes()">
+          <button ion-button icon-left clear small>
+            <ion-icon name="star"></ion-icon>
+            <div>{{filme.vote_average}}</div>
+          </button>
+        </a>
       </ion-col>
       <ion-col>
-        <a (click)="soma_comments()"><button ion-button icon-left clear small>
-          <ion-icon name="people"></ion-icon>
-          <div>{{filme.vote_count}} Votes</div>
-        </button></a>
+        <a (click)="soma_comments()">
+          <button ion-button icon-left clear small>
+            <ion-icon name="people"></ion-icon>
+            <div>{{filme.vote_count}} Votes</div>
+          </button>
+        </a>
       </ion-col>
     </ion-row>
-
+    <button ion-button block (click)="openDetails(filme.id)">Details</button>
   </ion-card>
+
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+ 
 </ion-content>

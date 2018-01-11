@@ -1,0 +1,89 @@
+<!--
+  Generated template for the MovieDetailsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>movieDetails</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-card *ngIf="filme">
+
+    <ion-item>
+      <ion-avatar item-start>
+        <img src="assets/img/tmdb.png" />
+      </ion-avatar>
+      <a href="{{filme.homepage}}">
+        <!-- <h2 class="feed_title">{{filme.original_title}}</h2> -->
+        <button ion-button clear small>{{filme.original_title}}</button>
+      </a>
+      <p class="date">{{filme.release_date}}</p>
+    </ion-item>
+
+    <img [src]="'https://image.tmdb.org/t/p/w300/' + filme.backdrop_path" />
+
+    <!-- <p>Genres: {{filme.genres.join(",")}}</p> -->
+
+    <p padding>Genres:
+      <b *ngFor="let genre of filme.genres; let isLast=last">
+        {{genre.name}}{{isLast ? '' : ', '}}
+      </b>
+    </p>
+
+    <!-- <p>Genres:
+      <b *ngFor="let genre of filme.genres">
+        {{genre.name}}, 
+      </b>
+    </p> -->
+
+    <ion-card-content>
+      <h2>{{filme.tagline}}</h2>
+      <br>
+      <p>{{filme.overview}}</p>
+      <br>
+      <!-- <a href="{{filme.homepage}}">
+        <button ion-button clear small>
+          <div class="home">Homepage</div>
+        </button>
+      </a> -->
+      <a href="https://www.themoviedb.org/movie/{{filme.id}}">
+        <button ion-button round>
+          <div class="mdb">TMDB Page</div>
+        </button>
+      </a>
+      <a href="http://www.imdb.com/title/{{filme.imdb_id}}">
+        <button ion-button round>
+          <div class="mdb">IMDB Page</div>
+        </button>
+      </a>
+
+    </ion-card-content>
+
+    <ion-row>
+      <ion-col>
+        <a (click)="soma_likes()">
+          <button ion-button icon-left clear small>
+            <ion-icon name="star"></ion-icon>
+            <div>{{filme.vote_average}}</div>
+          </button>
+        </a>
+      </ion-col>
+      <ion-col>
+        <a (click)="soma_comments()">
+          <button ion-button icon-left clear small>
+            <ion-icon name="people"></ion-icon>
+            <div>{{filme.vote_count}} Votes</div>
+          </button>
+        </a>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
+</ion-content>
